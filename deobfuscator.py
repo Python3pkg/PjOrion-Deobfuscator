@@ -1,7 +1,7 @@
 import types
 import opcode
 import collections
-import Queue
+import queue
 import marshal
 
 import simplify
@@ -84,7 +84,7 @@ def findLeaders(code_object, oep):
     leader_set.add(Leader('S', oep))
 
     # Queue to contain list of addresses to be analyzed by linear sweep disassembly algorithm
-    analysis_Q = Queue.Queue()
+    analysis_Q = queue.Queue()
     analysis_Q.put(oep)
 
     analyzed_addresses = set()
@@ -276,19 +276,19 @@ def deobfuscate(code_object):
     oep = findOEP(code_object)
 
     if oep == -1:
-        print 'Not generating cfg for ', code_object.co_name
+        print('Not generating cfg for ', code_object.co_name)
         return code_object.co_code
 
     leader_set = findLeaders(code_object, oep)
     bb_list = buildBasicBlocks(leader_set, code_object, oep)
     buildPositionIndepedentBasicBlock(bb_list)
-    print '--------------------------------------------'
-    print 'Original number of basic blocks: ', len(bb_list)
+    print('--------------------------------------------')
+    print('Original number of basic blocks: ', len(bb_list))
     #simplify. simplifyPass1(bb_list)
-    print 'Number of basic blocks after pass 1: ', len(bb_list)
+    print('Number of basic blocks after pass 1: ', len(bb_list))
     #simplify.simplifyPass2(bb_list)
-    print 'Number of basic blocks after pass 2: ', len(bb_list)
-    print '--------------------------------------------'
+    print('Number of basic blocks after pass 2: ', len(bb_list))
+    print('--------------------------------------------')
     #buildGraph(bb_list)
     return Assembler(bb_list).assemble()
     

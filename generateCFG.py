@@ -10,7 +10,7 @@ Note: if variable name obfuscation has been used, rename them before generating 
 import marshal
 import types
 import opcode
-import Queue
+import queue
 import collections
 import pydotplus
 import sys
@@ -123,7 +123,7 @@ class Instruction:
 class Disassembler:
     def __init__(self, c_obj):
         assert isinstance(c_obj, types.CodeType)
-        self.c_stream = map(ord, c_obj.co_code)
+        self.c_stream = list(map(ord, c_obj.co_code))
 
 
     def disas(self, offset):
@@ -132,7 +132,7 @@ class Disassembler:
         opkode = self.c_stream[offset]
 
         # Invalid instruction
-        if opkode not in opcode.opmap.values():
+        if opkode not in list(opcode.opmap.values()):
             return Instruction(offset, -1, '<INVALID>', 1, None)
 
         if opkode < opcode.HAVE_ARGUMENT:
@@ -156,20 +156,20 @@ class BasicBlock:
 
 
     def prettyPrint(self):
-        print 'off_{}:'.format(self.start_offset)
+        print('off_{}:'.format(self.start_offset))
         offset = self.start_offset
 
         while offset <= self.end_offset:
             instr = self.disassembler.disas(offset)
             if not instr.hasArgs():
-                print offset, instr.mnemonic
+                print(offset, instr.mnemonic)
 
             else:
                 args = instr.args
                 if instr.isRelativeJmp():
-                    print offset, instr.mnemonic, args, '(to off_{})'.format(offset + instr.size + args)
+                    print(offset, instr.mnemonic, args, '(to off_{})'.format(offset + instr.size + args))
                 else:
-                    print offset, instr.mnemonic, args
+                    print(offset, instr.mnemonic, args)
 
             offset += instr.size
 
@@ -244,7 +244,7 @@ def getLeaders(c_obj, start_offset):
     leader_set = set()
     leader_set.add(Leader('S', start_offset))
 
-    analysis_Q = Queue.Queue()
+    analysis_Q = queue.Queue()
     analysis_Q.put(start_offset)
 
     analyzed_addresses = set()
@@ -386,7 +386,7 @@ def drawCFG(code_obj, filename):
     #entrypoint = oep = findOEP(code_obj)
     entrypoint = oep = 0
     if oep == -1:
-        print 'Not generating cfg for ', code_obj.co_name
+        print('Not generating cfg for ', code_obj.co_name)
         return
 
     leader_set = getLeaders(code_obj, oep)
@@ -421,7 +421,7 @@ def recurseCodeObjects(c_obj):
 def main():
     global filenameprefix
     if len(sys.argv) < 2:
-        print 'Usage: generateCFG.py <pyc file>'
+        print('Usage: generateCFG.py <pyc file>')
         return
         
     with open(sys.argv[1], 'rb') as fSrc:
@@ -429,7 +429,7 @@ def main():
         fSrc.seek(8)
         code_obj = marshal.load(fSrc)
         recurseCodeObjects(code_obj)
-        print 'Done...'
+        print('Done...')
 
 
 if __name__ == '__main__':

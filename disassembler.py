@@ -7,7 +7,7 @@ from instruction import Instruction
 class Disassembler:
     def __init__(self, code_object):
         assert isinstance(code_object, types.CodeType)
-        self.c_stream = map(ord, code_object.co_code)
+        self.c_stream = list(map(ord, code_object.co_code))
 
 
     def disasAt(self, offset):
@@ -16,7 +16,7 @@ class Disassembler:
         opkode = self.c_stream[offset]
 
         # Invalid instruction
-        if opkode not in opcode.opmap.values():
+        if opkode not in list(opcode.opmap.values()):
             return Instruction(-1, None, 1)
 
         if opkode < opcode.HAVE_ARGUMENT:

@@ -1,5 +1,5 @@
 import opcode
-import cStringIO
+import io
 
 import utils
 from basicblock import BasicBlock
@@ -54,7 +54,7 @@ class Assembler:
     
     
     def _emit(self):
-        code = cStringIO.StringIO()
+        code = io.StringIO()
         for i in range(len(self.a_postorder) - 1, -1, -1):
             bb = self.a_postorder[i]
             

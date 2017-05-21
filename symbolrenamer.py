@@ -36,7 +36,7 @@ def rename(code_obj):
 
 def main():
     if len(sys.argv) < 3:
-        print 'Usage: symbolrenamer.py <source pyc> <output pyc>'
+        print('Usage: symbolrenamer.py <source pyc> <output pyc>')
         return
     
     else:
@@ -48,7 +48,7 @@ def main():
         with open(sys.argv[2], 'wb') as fOut:
             fOut.write('\x03\xf3\x0d\x0a\0\0\0\0')
             marshal.dump(deob, fOut)
-            print 'Done...'
+            print('Done...')
 
 
 if __name__ == '__main__':
